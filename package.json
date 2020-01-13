@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "nodemon app.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -11,6 +11,20 @@
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
-    "morgan": "~1.9.1"
-  }
+    "morgan": "~1.9.1",
+    "stripe": "^8.0.1"
+  },
+  "description": "Backend API to integrate with frontend UI to bill clients using stripe.",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrMarciaOng/wootech-PCI-DSS-App-BE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrMarciaOng/wootech-PCI-DSS-App-BE/issues"
+  },
+  "homepage": "https://github.com/MrMarciaOng/wootech-PCI-DSS-App-BE#readme"
 }
