@@ -16,7 +16,9 @@
   },
   "description": "Backend API to integrate with frontend UI to bill clients using stripe.",
   "main": "app.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MrMarciaOng/wootech-PCI-DSS-App-BE.git"
