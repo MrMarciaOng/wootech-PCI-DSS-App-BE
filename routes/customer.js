@@ -23,6 +23,13 @@ let addCardToCustomer = async(customerId, cardToken) => {
   );
   return card
 }
+
+let createInvoice = async(billAmount, billCurrency, customerId, billDescription) => {
+  let invoice = await stripe.invoiceItems.create({
+    amount: billAmount, currency: billCurrency, customer: customerId, description: billDescription
+  });
+  return invoice;
+}
 router.post('/newcustomer', async(req, res) => {
   let customer = await stripe.customers.create({
     name: 'jenny rosen',  
@@ -40,5 +47,15 @@ router.post('/newcard', async(req, res) => {
   let token = await createCardToken(testCard);
   let card = await addCardToCustomer(customerId, token);
   res.send(card);
+});
+
+router.post('/newpayable', async(req, res) => {
+  let amount = 21000; //amount includes dollar and cents values
+  let currency = 'sgd';
+  let customerEmail = 'jenny.rosen@example.com';
+  let description = 'Pest Control';
+  let customerId = await retrieveCustomer(customerEmail);
+  await createInvoice(amount, currency, customerId, description);
+  res.send("Create Invoice Success");
 });
 module.exports = router;
