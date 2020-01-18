@@ -43,12 +43,14 @@ router.post('/newcustomer', async(req, res, next) => {
   res.send(customerCreated);
 });
 
-router.post('/newcard', async(req, res) => {
-  let customerEmail = 'jenny.rosen@example.com';
-  let testCard = {number: '4242424242424242', exp_month: 1, exp_year: 2021, cvc: '314'};
-  //get customerID
-  let customerId = await retrieveCustomer(customerEmail);
-  let token = await createCardToken(testCard);
+router.post('/newcard', async(req, res, next) => {
+  let customerId = await retrieveCustomer(req.body.email);
+  let token = await createCardToken({
+    number: req.body.card_number, 
+    exp_month: req.body.card_exp_mm,
+    exp_year: req.body.card_exp_yyyy,
+    cvc: req.body.card_cvc
+  });
   let card = await addCardToCustomer(customerId, token);
   res.send(card);
 });
