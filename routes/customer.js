@@ -38,6 +38,20 @@ let createInvoice = async(billAmount, billCurrency, customerId, billDescription)
   });
   return invoice;
 }
+
+let createInvoice = async(customerId, collectionMethod, daysUntilDue) => {
+  let invoice = await stripe.invoices.create({
+    customer: customerId,
+    collection_method: collectionMethod,
+    days_until_due: daysUntilDue
+  });
+  return invoice;
+}
+
+let sendInvoice = async(invoiceId) => {
+  let sentInvoice = await stripe.invoices.sendInvoice(invoiceId);
+  return sentInvoice
+}
 router.post('/newcustomer', async(req, res, next) => {
   let customerCreated = await createCustomer(req.body.name, req.body.email, req.body.description);
   res.send(customerCreated);
@@ -55,11 +69,15 @@ router.post('/newcard', async(req, res, next) => {
   res.send(card);
 });
 
-router.post('/newpayable', async(req, res) => {
-  let amount = 21000; //amount includes dollar and cents values
-  let currency = 'sgd';
-  let customerEmail = 'jenny.rosen@example.com';
-  let description = 'Pest Control';
+router.post('/sent', async(req, res, next) => {
+  let customerId = await retrieveCustomer(req.body.email);
+  await createInvoiceItems(req.body.amount, req.body.currency, customerId, req.body.description)
+  let invoice = await createInvoice(customerId, req.body.collection_method, req.body.days_payment_dued)
+  let invoiceSent = await sendInvoice(invoice.id);
+  let invoicePdfLink = invoiceSent.invoice_pdf;
+  let invoiceNumber = invoiceSent.number;
+  res.send(invoiceSent)
+});
   let customerId = await retrieveCustomer(customerEmail);
   await createInvoice(amount, currency, customerId, description);
   res.send("Create Invoice Success");
