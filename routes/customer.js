@@ -32,7 +32,8 @@ let addCardToCustomer = async(customerId, cardToken) => {
   return card
 }
 
-let createInvoice = async(billAmount, billCurrency, customerId, billDescription) => {
+// Sending on-ff invoices
+let createInvoiceItems = async(billAmount, billCurrency, customerId, billDescription) => {
   let invoice = await stripe.invoiceItems.create({
     amount: billAmount, currency: billCurrency, customer: customerId, description: billDescription
   });
@@ -52,6 +53,53 @@ let sendInvoice = async(invoiceId) => {
   let sentInvoice = await stripe.invoices.sendInvoice(invoiceId);
   return sentInvoice
 }
+
+// Sending subscription invoices
+let sendInvoiceSubscription = async (customerId, planId, collectionMethod, daysUntilDue) => {
+  let sentInvoiceSubscription = await stripe.subscriptions.create({
+    customer: customerId,
+    items: [{plan: planId}],
+    collection_method: collectionMethod,
+    days_until_due: daysUntilDue,
+  });
+  return sentInvoiceSubscription;
+}
+
+// Allow company to create subscription service
+let createSubscriptionService = async(serviceName, serviceType) => {
+  let service_product = await stripe.products.create({
+    name: serviceName,
+    type: serviceType
+  });
+  return service_product;
+}
+
+let createSubscriptionServicePlan = async(planNickname, serviceProductId, subscriptionAmount, subscriptionCurrency, subscriptionInterval, subscriptionIntervalCount=null, subscriptionUsage_Type) => {
+  let service_subscription_plan = await stripe.plans.create({
+    nickname: planNickname,
+    product: serviceProductId,
+    amount: subscriptionAmount,
+    currency: subscriptionCurrency,
+    interval: subscriptionInterval, //monthly, or yearly
+    interval_count: subscriptionIntervalCount, //every number of months or year
+    usage_type: subscriptionUsage_Type
+  });
+  return service_subscription_plan;
+}
+
+let addSubscriptionProductServiceToCustomer = async(customerId, serviceSubscriptionId, serviceQuantity) => {
+  let subscription = await stripe.subscription.create({
+    customer: customerId,
+    items: [
+      {
+        plan: serviceSubscriptionId,
+        quantity: serviceQuantity
+      }
+    ]
+  });
+  return subscription; 
+}// must be able to add more than one subscription
+
 router.post('/newcustomer', async(req, res, next) => {
   let customerCreated = await createCustomer(req.body.name, req.body.email, req.body.description);
   res.send(customerCreated);
