@@ -1,6 +1,9 @@
 var express = require('express');
+var config = require('../config.json');
+console.log(config);
+
 var router = express.Router();
-const stripe = require('stripe')('sk_test_Gxr8M1MRZLzF34kDIunVrKOM00K4Cv02R8');
+const stripe = require('stripe')(config.stripe-test-key);
 
 // Customer interactions and adding cards to customer
 let createCustomer = async(customerName, customerEmail, customerDescription, customerReferenceNo=null) => {
