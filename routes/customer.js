@@ -2,6 +2,14 @@ var express = require('express');
 var router = express.Router();
 const stripe = require('stripe')('sk_test_Gxr8M1MRZLzF34kDIunVrKOM00K4Cv02R8');
 
+let createCustomer = async(customerName, customerEmail, customerDescription, customerReferenceNo=null) => {
+  let customer = await stripe.customers.create({
+    name: customerName,
+    email: customerEmail,
+    description: customerDescription
+  });
+  return customer;
+}
 
 let retrieveCustomer = async(customerEmail) => {
   let customer = await stripe.customers.list(
@@ -30,13 +38,9 @@ let createInvoice = async(billAmount, billCurrency, customerId, billDescription)
   });
   return invoice;
 }
-router.post('/newcustomer', async(req, res) => {
-  let customer = await stripe.customers.create({
-    name: 'jenny rosen',  
-    email: 'jenny.rosen@example.com',
-    description: 'My First Test Customer (created for API docs)'
-  })
-  res.send(customer);
+router.post('/newcustomer', async(req, res, next) => {
+  let customerCreated = await createCustomer(req.body.name, req.body.email, req.body.description);
+  res.send(customerCreated);
 });
 
 router.post('/newcard', async(req, res) => {
