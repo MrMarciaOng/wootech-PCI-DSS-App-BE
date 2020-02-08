@@ -146,7 +146,7 @@ router.post('/billNewCustomer', async (req, res, next) => {
   let card = await addCardToCustomer(customer.id, token);
 
   //send invoice 
-  await createInvoiceItems(req.body.amount_to_pay, 'SGD', customer.id)
+  await createInvoiceItems(req.body.amount_to_pay*100, 'SGD', customer.id)
   let invoice = await createInvoice(customer.id, 'send_invoice',1)
   let invoiceSent = await sendInvoice(invoice.id);
   //let invoiceSent = await sendInvoice(invoice.id);

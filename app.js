@@ -8,9 +8,9 @@ const bodyParser = require ('body-parser')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var customerRouter = require('./routes/customer');
-
+var cors = require('cors')
 var app = express();
-
+app.use(cors())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
